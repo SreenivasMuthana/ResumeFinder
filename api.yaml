@@ -1,0 +1,241 @@
+# openapi: 3.0.0
+# info:
+#   title: HR Management API
+#   description: API for managing HR users and their actions
+#   version: 1.0.0
+# servers:
+#   -url: http://localhost:5000/  # Update with your server URL
+# paths:
+#   /hr/registerHr:
+#     post:
+#       summary: Register a new HR user
+#       description: Endpoint to register a new HR user
+#       requestBody:
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/HRRegistration'
+#       responses:
+#         '201':
+#           description: HR user successfully registered
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   success:
+#                     type: boolean
+#                     example: true
+#                   message:
+#                     type: string
+#                     example: Successfully HR registered
+#                   payload:
+#                     $ref: '#/components/schemas/HR'
+#         '500':
+#           description: Internal server error
+#   /hr/login:
+#     post:
+#       summary: Login as HR user
+#       description: Endpoint to log in as HR user
+#       requestBody:
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               $ref: '#/components/schemas/LoginCredentials'
+#       responses:
+#         '200':
+#           description: HR user logged in successfully
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   success:
+#                     type: boolean
+#                     example: true
+#                   token:
+#                     type: string
+#                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+#                   id:
+#                     type: string
+#                     example: "611f19c8f2f2082a80000000"
+#         '400':
+#           description: Bad request - Please provide an email and a password
+#         '401':
+#           description: Invalid credentials
+#         '500':
+#           description: Internal server error
+#   /hrs:
+#     get:
+#       summary: Get all HR users
+#       description: Endpoint to fetch all HR users
+#       responses:
+#         '200':
+#           description: HR users fetched successfully
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   success:
+#                     type: boolean
+#                     example: true
+#                   payload:
+#                     type: array
+#                     items:
+#                       $ref: '#/components/schemas/HR'
+#         '500':
+#           description: Internal server error
+#   /users/search:
+#     get:
+#       summary: Search users based on criteria
+#       description: Endpoint to search for users based on name, phone, email, skills, company, position, and years of experience
+#       parameters:
+#         - in: query
+#           name: name
+#           schema:
+#             type: string
+#           description: Name of the user
+#         - in: query
+#           name: phone
+#           schema:
+#             type: number
+#           description: Phone number of the user
+#         - in: query
+#           name: email
+#           schema:
+#             type: string
+#           description: Email of the user
+#         - in: query
+#           name: skills
+#           schema:
+#             type: string
+#           description: Skills of the user
+#         - in: query
+#           name: company
+#           schema:
+#             type: string
+#           description: Company of the user's experience
+#         - in: query
+#           name: position
+#           schema:
+#             type: string
+#           description: Position of the user's experience
+#         - in: query
+#           name: years
+#           schema:
+#             type: string
+#           description: Years of experience of the user (format: "operator:value", e.g., "gte:5")
+#       responses:
+#         '200':
+#           description: Users fetched successfully
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   $ref: '#/components/schemas/User'
+#         '400':
+#           description: Invalid 'years' operator
+#         '404':
+#           description: No matching documents found
+#         '500':
+#           description: Internal server error
+#   /users/{userId}/resume:
+#     get:
+#       summary: Download user resume
+#       description: Endpoint to download a user's resume
+#       parameters:
+#         - in: path
+#           name: userId
+#           required: true
+#           schema:
+#             type: string
+#           description: ID of the user
+#       responses:
+#         '200':
+#           description: Resume downloaded successfully
+#           content:
+#             application/octet-stream:
+#               schema:
+#                 type: string
+#                 format: binary
+#         '404':
+#           description: User not found or resume not found
+#         '500':
+#           description: Internal server error
+#   /users/{userId}:
+#     delete:
+#       summary: Delete user
+#       description: Endpoint to delete a user
+#       parameters:
+#         - in: path
+#           name: userId
+#           required: true
+#           schema:
+#             type: string
+#           description: ID of the user to delete
+#       responses:
+#         '201':
+#           description: User successfully deleted
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   success:
+#                     type: boolean
+#                     example: true
+#                   message:
+#                     type: string
+#                     example: Successfully deleted User
+#         '404':
+#           description: No user found with the provided ID
+#         '500':
+#           description: Internal server error
+
+# components:
+#   schemas:
+#     HRRegistration:
+#       type: object
+#       required:
+#         - name
+#         - phone
+#         - email
+#         - password
+#       properties:
+#         name:
+#           type: string
+#         phone:
+#           type: number
+#         email:
+#           type: string
+#           format: email
+#         password:
+#           type: string
+#     HR:
+#       type: object
+#       properties:
+#         _id:
+#           type: string
+#           example: "611f19c8f2f2082a80000000"
+#         name:
+#           type: string
+#         phone:
+#           type: number
+#         email:
+#           type: string
+#           format: email
+#     LoginCredentials:
+#       type: object
+#       required:
+#         - email
+#         - password
+#       properties:
+#         email:
+#           type: string
+#           format: email
+#         password:
+#           type: string
